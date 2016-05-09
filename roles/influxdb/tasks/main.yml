@@ -1,19 +1,19 @@
 ---
 - name: influxdb - create folders
-  shell: mkdir -p ~/src
+  shell: mkdir -p ~/rpm
 
 - name: influxdb - check if sources have been downloaded
-  stat: path=~/src/influxdb_latest_amd64.deb
+  stat: path=~/rpm/{{ INFLUXDB_RPM_FILENAME }}.rpm
   register: influxdb_download
 
 - name: influxdb - download sources
-  shell: wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb
+  shell: wget http://s3.amazonaws.com/influxdb/{{ INFLUXDB_RPM_FILENAME }}.rpm
   when: not influxdb_download.stat.exists
   args:
-    chdir: ~/src
+    chdir: ~/rpm
 
 - name: influxdb - install
-  shell: dpkg -i ~/src/influxdb_latest_amd64.deb
+  shell: "yum install -y ~/rpm/{{ INFLUXDB_RPM_FILENAME }}.rpm"
 
 - name: influxdb - start service
   service: name=influxdb state=started

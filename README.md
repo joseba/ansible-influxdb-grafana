@@ -1,8 +1,7 @@
-# Ansible Playbook for InfluxDB & Grafana on DigitalOcean
+# Ansible Playbook for InfluxDB & Grafana
 
 This playbook aims to install [InfluxDB](http://influxdb.com/) and
-[Grafana](http://grafana.org/) on a Ubuntu 14.10 droplet on
-[DigitalOcean](https://www.digitalocean.com/?refcode=eea42e4b1499).
+[Grafana](http://grafana.org/) on a CentOS
 
 The whole process took me 4 minutes from droplet creation to finished
 installation.
@@ -10,10 +9,8 @@ installation.
 # Quick quide
 
 ```
-apt-get install python-devel python-pip
-sudo pip install ansible --upgrade
-git clone https://github.com/bitmazk/ansible-digitalocean-influxdb-grafana.git
-cd ansible-digitalocean-influxdb-grafana
+git clone https://github.com/joseba/ansible-influxdb-grafana.git
+cd ansible-influxdb-grafana
 cp hosts.sample hosts
 vim hosts
 cp vars/external_vars.yml.sample vars/external_vars.yml
@@ -30,11 +27,10 @@ I haven't figured out how to run this stack with an SSL cert, so this is rather
 insecure at the moment. For some reason, InfluxDB doesn't seem to work with
 the same self signed SSL cert that I created for nginx.
 
-## Create droplet & upload SSH key
+## Create CentOS & upload SSH key
 
-First setup your droplet on DigitalOcean. Make sure to upload your public
-SSH key and select that key when creating your droplet. This will allow you to
-login as root without entering a password.
+First setup your CentoOS. Make sure to upload your public
+SSH key. This will allow you to login as root without entering a password.
 
 ## Install Ansible
 
@@ -51,8 +47,7 @@ sudo pip install ansible --upgrade
 
 Now clone this repository and ``cd`` into the cloned folder.
 
-Copy the ``hosts.example`` file and enter the IP address of your DigitalOcean
-droplet.
+Copy the ``hosts.example`` file and enter the IP address of your CentOS.
 
 ```
 cp hosts.example hosts
@@ -79,11 +74,11 @@ Wasn't that easy? ;)
 
 ## Create awesome dashboards
 
-You can now visit ``http://<droplet-ip>:8083`` and see your InfluxDB admin.
+You can now visit ``http://<centos-ip>:8083`` and see your InfluxDB admin.
 You will see that we have two databases, one for saving grafana dashboards and
 another for your project's metrics.
 
-You can also visit ``http://<droplet-ip>`` to see your grafana dashboard.
+You can also visit ``http://<centos-ip>`` to see your grafana dashboard.
 
 ## Update Grafana
 

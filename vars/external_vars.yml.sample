@@ -1,4 +1,7 @@
 ---
+# Version of influxdb you want to install
+INFLUXDB_RPM_FILENAME: 'influxdb-0.12.2-1.x86_64'
+
 # Password for your InfluxDB root user
 INFLUXDB_ROOT_PASSWORD: 'root'
 

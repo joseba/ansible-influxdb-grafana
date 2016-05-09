@@ -1,2 +1,3 @@
 hosts
 external_vars.yml
+*.retry

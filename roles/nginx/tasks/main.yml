@@ -1,21 +1,30 @@
 ---
 - name: nginx - install nginx
-  apt: name=nginx update_cache=yes cache_valid_time=3600
+  yum: name=nginx state=present
 
 - name: nginx - install python-passlib
-  apt: name=python-passlib
+  yum: name=python-passlib state=present
 
-- name: nginx - install apache2-utils
-  apt: name=apache2-utils
+- name: nginx - install httpd-tools
+  yum: name=httpd-tools state=present
 
 - name: nginx - htpasswd
-  htpasswd: path=/etc/nginx/.htpasswd name=grafana password={{ HTPASSWD_GRAFANA_PASSWORD }} owner=root group=www-data mode=0640
+  htpasswd: path=/etc/nginx/.htpasswd name=grafana password={{ HTPASSWD_GRAFANA_PASSWORD }} owner=root group=nginx mode=0640
+
+- name: grafana - chown
+  shell: chown -R nginx:nginx /var/www/grafana
+
+- name: nginx - create directory
+  file: path=/etc/nginx/sites-enabled/ state=directory mode=0755
 
 - name: nginx - copy site
   template: src=grafana dest=/etc/nginx/sites-enabled/
 
 - name: nginx - remove default site
   file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: nginx - enable sites-enabled directory
+  lineinfile: dest=/etc/nginx/nginx.conf line="include /etc/nginx/sites-enabled/*.conf;" insertafter="^http {\n"
 
 - name: nginx - restart
   service: name=nginx state=restarted

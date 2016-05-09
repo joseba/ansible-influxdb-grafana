@@ -2,6 +2,9 @@
 - name: grafana - create folders
   shell: mkdir -p /var/www/
 
+- name: grafana - create folders
+  shell: mkdir -p ~/src
+
 - name: grafana - check if sources have been downloaded
   stat: path=~/src/{{ GRAFANA_SOURCE_FILENAME }}.tar.gz
   register: grafana_download
@@ -20,9 +23,6 @@
 
 - name: grafana - copy source
   shell: cp -rf ~/src/{{ GRAFANA_SOURCE_FILENAME }} /var/www/grafana
-
-- name: grafana - chown
-  shell: chown -R www-data:www-data /var/www/grafana
 
 - name: grafana - copy config
   template: src=config.js dest=/var/www/grafana/
