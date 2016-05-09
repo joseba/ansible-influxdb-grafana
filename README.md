@@ -3,8 +3,7 @@
 This playbook aims to install [InfluxDB](http://influxdb.com/) and
 [Grafana](http://grafana.org/) on a CentOS
 
-The whole process took me 4 minutes from droplet creation to finished
-installation.
+Based on: bitmazk/ansible-digitalocean-influxdb-grafana
 
 # Quick quide
 
