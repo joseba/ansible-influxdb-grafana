@@ -1,0 +1,12 @@
+---
+- name: collectd - install
+  yum: name=collectd state=present
+
+- name: collectd - backup config example
+  copy: remote_src=True src=/etc/collectd.conf dest=/etc/collectd.conf.sample
+
+- name: collectd - copy config
+  template: src=collectd.conf dest=/etc/collectd.conf
+
+- name: collectd - start service
+  service: name=collectd state=started

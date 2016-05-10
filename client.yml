@@ -1,0 +1,8 @@
+---
+- name: main task
+  hosts: mon1
+  vars_files:
+    - vars/external_vars.yml
+
+  roles:
+    - collectd
