@@ -1,11 +1,11 @@
 ---
 # Version of influxdb you want to install
-INFLUXDB_RPM_FILENAME: 'influxdb-0.12.2-1.x86_64'
+INFLUXDB_RPM_FILENAME: 'influxdb-0.9.6.1-1.x86_64.rpm'
 
 # Password for your InfluxDB root user
 INFLUXDB_ROOT_PASSWORD: 'root'
 
-# Database that will hold your Django project's metrics
+# Database that will hold your project's metrics
 INFLUXDB_DATABASE: 'project'
 
 # User that will connect to above database
@@ -18,10 +18,13 @@ INFLUXDB_PASSWORD: 'project'
 INFLUXDB_GRAFANA_PASSWORD: 'grafana'
 
 # Version of grafana you want to install
-GRAFANA_SOURCE_FILENAME: 'grafana-1.8.1'
+GRAFANA_RPM_FILENAME: 'grafana-2.6.0-1.x86_64.rpm'
 
 # Port for grafana nginx virtual server
-GRAFANA_NGINX_PORT: 80
+# GRAFANA_NGINX_PORT: 8080
 
 # Basic HTTP AUTH password for the grafana frontent (username is grafana)
-HTPASSWD_GRAFANA_PASSWORD: 'grafana'
+# HTPASSWD_GRAFANA_PASSWORD: 'grafana'
+
+# INFLUXDB endpoint (for collectd)
+INFLUXDB_ADDRESS: '127.0.0.1'

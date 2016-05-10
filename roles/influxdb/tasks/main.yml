@@ -1,40 +1,38 @@
 ---
 - name: influxdb - create folders
-  shell: mkdir -p ~/rpm
+  file: path=~/rpm state=directory mode=0755
 
 - name: influxdb - check if sources have been downloaded
-  stat: path=~/rpm/{{ INFLUXDB_RPM_FILENAME }}.rpm
+  stat: path=~/rpm/{{ INFLUXDB_RPM_FILENAME }}
   register: influxdb_download
 
 - name: influxdb - download sources
-  shell: wget http://s3.amazonaws.com/influxdb/{{ INFLUXDB_RPM_FILENAME }}.rpm
+  shell: wget http://s3.amazonaws.com/influxdb/{{ INFLUXDB_RPM_FILENAME }}
   when: not influxdb_download.stat.exists
   args:
     chdir: ~/rpm
 
 - name: influxdb - install
-  shell: "yum install -y ~/rpm/{{ INFLUXDB_RPM_FILENAME }}.rpm"
+  yum: name=/{{ ansible_env.HOME}}/rpm/{{ INFLUXDB_RPM_FILENAME }} state=present
+
+- name: influxdb - copy config
+  template: src=influxdb.conf dest=/etc/influxdb/influxdb.conf
 
 - name: influxdb - start service
   service: name=influxdb state=started
 
 - name: influxdb - wait for service
-  wait_for: port=8086 delay=5
+  wait_for: port=8086 delay=2
 
-- name: influxdb - deploy shards_default.json
-  template: src=shards_default.json dest=/tmp/
-
-- name: influxdb - create project database
-  shell: curl -X POST "http://localhost:8086/cluster/database_configs/{{ INFLUXDB_DATABASE }}?u=root&p=root" --data-binary @/tmp/shards_default.json
-
+# created by collectd plugin conf
 - name: influxdb - create grafana database
-  shell: "curl -X POST 'http://localhost:8086/cluster/database_configs/grafana?u=root&p=root' -d '{\"name\": \"grafana\"}'"
+  shell: "influx -execute 'CREATE DATABASE {{ INFLUXDB_DATABASE }}'"
 
 - name: influxdb - create project user
-  shell: "curl -X POST 'http://localhost:8086/db/{{ INFLUXDB_DATABASE }}/users?u=root&p=root' -d '{\"name\": \"{{ INFLUXDB_USER }}\", \"password\": \"{{ INFLUXDB_PASSWORD }}\"}'"
+  shell: "influx -execute \"CREATE USER {{ INFLUXDB_USER }} WITH PASSWORD '{{ INFLUXDB_PASSWORD }}'\""
 
 - name: influxdb - create grafana user
-  shell: "curl -X POST 'http://localhost:8086/db/grafana/users?u=root&p=root' -d '{\"name\": \"grafana\", \"password\": \"{{ INFLUXDB_GRAFANA_PASSWORD }}\"}'"
+  shell: "influx -execute \"CREATE USER grafana WITH PASSWORD '{{ INFLUXDB_GRAFANA_PASSWORD }}'\""
 
-- name: influxdb - change root pw
-  shell: "curl -X POST 'http://localhost:8086/cluster_admins/root?u=root&p=root' -d '{\"password\": \"{{ INFLUXDB_ROOT_PASSWORD }}\"}'"
+- name: influxdb - create admin user
+  shell: "influx -execute \"CREATE USER root WITH PASSWORD '{{ INFLUXDB_ROOT_PASSWORD }}' WITH ALL PRIVILEGES\""

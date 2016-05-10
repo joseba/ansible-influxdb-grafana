@@ -1,28 +1,25 @@
 ---
 - name: grafana - create folders
-  shell: mkdir -p /var/www/
+  file: path=~/rpm state=directory mode=0755
 
-- name: grafana - create folders
-  shell: mkdir -p ~/src
-
-- name: grafana - check if sources have been downloaded
-  stat: path=~/src/{{ GRAFANA_SOURCE_FILENAME }}.tar.gz
+- name: grafana - check if rpms have been downloaded
+  stat: path=~/rpm/{{ GRAFANA_RPM_FILENAME }}
   register: grafana_download
 
-- name: grafana - download sources
-  shell: wget http://grafanarel.s3.amazonaws.com/{{ GRAFANA_SOURCE_FILENAME }}.tar.gz
+- name: grafana - download rpms
+  shell: wget http://grafanarel.s3.amazonaws.com/builds/{{ GRAFANA_RPM_FILENAME }}
   when: not grafana_download.stat.exists
   args:
-    chdir: ~/src
+    chdir: ~/rpm
 
-- name: grafana - extract archive
-  shell: tar -xvf {{ GRAFANA_SOURCE_FILENAME }}.tar.gz
-  when: not grafana_download.stat.exists
-  args:
-    chdir: ~/src
+#- name: grafana - install deps
+#  shell: "yum install -y initscripts fontconfig"
 
-- name: grafana - copy source
-  shell: cp -rf ~/src/{{ GRAFANA_SOURCE_FILENAME }} /var/www/grafana
+- name: grafana - install
+  yum: name=/{{ ansible_env.HOME}}/rpm/{{ GRAFANA_RPM_FILENAME }} state=present
 
-- name: grafana - copy config
-  template: src=config.js dest=/var/www/grafana/
+- name: grafana - reload systemd
+  shell: "systemctl daemon-reload"
+
+- name: gragana - start service
+  service: name=grafana-server state=started

@@ -6,7 +6,7 @@
   sudo: yes
 
   roles:
+    - collectd
     - influxdb
     - grafana
-    - nginx
-    - python-server-metrics
+    - collectd
